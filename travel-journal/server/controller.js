@@ -1,6 +1,18 @@
-require('dotenv').config();
+require("dotenv").config();
+
+const Sequelize = require("sequelize");
 
 const { CONNECTION_STRING } = process.env;
+
+const sequelize = new Sequelize(CONNECTION_STRING, {
+    dialect: "postgres",
+    dialectOptions: {
+        ssl: {
+            rejectUnauthorized: false,
+        },
+    },
+});
+// assessment page didn't include the commas, but interactive controller.js file did.  Not sure if it's needed, but may be reason for syntax error if one is returned ??
 
 module.exports = {
     seed: (req, res) => {
@@ -13,7 +25,12 @@ module.exports = {
                 name varchar
             );
 
-            *****YOUR CODE HERE*****
+            CREATE TABLE cities (
+                city_id SERIAL PRIMARY KEY,
+                name VARCHAR,
+                rating INTEGER,
+                country_id INTEGER REFERENCES countries (country_id)
+            )
 
             insert into countries (name)
             values ('Afghanistan'),
