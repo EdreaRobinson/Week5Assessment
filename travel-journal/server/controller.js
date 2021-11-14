@@ -12,7 +12,6 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
         },
     },
 });
-// assessment page didn't include the commas, but interactive controller.js file did.  Not sure if it's needed, but may be reason for syntax error if one is returned ??
 
 module.exports = {
     seed: (req, res) => {
@@ -27,10 +26,10 @@ module.exports = {
 
             CREATE TABLE cities (
                 city_id SERIAL PRIMARY KEY,
-                name VARCHAR,
+                name VARCHAR(50),
                 rating INTEGER,
                 country_id INTEGER REFERENCES countries (country_id)
-            )
+            );
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -232,5 +231,43 @@ module.exports = {
             console.log('DB seeded!')
             res.sendStatus(200)
         }).catch(err => console.log('error seeding DB', err))
+    },
+    getCountries: (req, res) => {
+        sequelize.query(`
+        SELECT *
+        FROM countries;`)
+            .then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err => console.log(err))
+    },
+    createCity: (req, res) => {
+        const {name, rating, countryId} = req.body
+        sequelize.query(`
+            INSERT INTO cities (name, rating, country_id)
+            VALUES ('${name}',
+            '${rating}', '${countryId}');
+            `)
+            .then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err => console.log(err))
+    },
+    
+
+    getCities: (req, res) => {
+        sequelize.query(`
+        SELECT a.city_id, a.name AS city, a.rating, b.country_id, b.name AS country
+        FROM cities as a
+            JOIN countries as b
+                ON a.country_id = b.country_id;`)
+            .then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err => console.log(err))
+    },
+
+    deleteCity: (req, res) => {
+        const cityId = req.params.id;
+        sequelize.query(`
+            DELETE FROM cities 
+            WHERE city_id = ${cityId};
+            `)
+            .then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err => console.log(err))
     }
 }
