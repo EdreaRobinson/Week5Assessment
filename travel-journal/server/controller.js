@@ -18,18 +18,21 @@ module.exports = {
         sequelize.query(`
             drop table if exists cities;
             drop table if exists countries;
-
+            
             create table countries (
                 country_id serial primary key, 
                 name varchar
-            );
-
-            CREATE TABLE cities (
-                city_id SERIAL PRIMARY KEY,
-                name VARCHAR(50),
-                rating INTEGER,
-                country_id INTEGER REFERENCES countries (country_id)
-            );
+                );
+                
+                CREATE TABLE cities (
+                    city_id SERIAL PRIMARY KEY,
+                    name VARCHAR(50),
+                    rating INTEGER,
+                    country_id serial
+                    );
+                    
+            INSERT INTO cities (name, rating, country_id)
+            VALUES ('Amsterdam', 5, 1), ('Barcelona', 4, 2), ('London', 3, 2);
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -227,6 +230,7 @@ module.exports = {
             ('Yemen'),
             ('Zambia'),
             ('Zimbabwe');
+
         `).then(() => {
             console.log('DB seeded!')
             res.sendStatus(200)
@@ -256,7 +260,8 @@ module.exports = {
         SELECT a.city_id, a.name AS city, a.rating, b.country_id, b.name AS country
         FROM cities as a
             JOIN countries as b
-                ON a.country_id = b.country_id;`)
+                ON a.country_id = b.country_id
+        ORDER BY a.rating DESC;`)
             .then(dbRes => res.status(200).send(dbRes[0]))
             .catch(err => console.log(err))
     },
