@@ -32,7 +32,7 @@ module.exports = {
                     );
                     
             INSERT INTO cities (name, rating, country_id)
-            VALUES ('Amsterdam', 5, 1), ('Barcelona', 4, 2), ('London', 3, 2);
+            VALUES ('Amsterdam', 4, 123), ('Barcelona', 4, 165), ('London', 2, 186), ('Ocho Rios', 5, 85);
 
             insert into countries (name)
             values ('Afghanistan'),
